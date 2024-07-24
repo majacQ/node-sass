@@ -10,31 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: node:${{ matrix.node }}-alpine${{ matrix.alpine }}
+      image: node:${{ matrix.node }}-alpine
     strategy:
       fail-fast: false
       matrix:
         node:
-          - 12
-          - 14
-          - 15
           - 16
-
-        include:
-          - node: 12
-            alpine: "3.9"
-          - node: 14
-            alpine: "3.10"
-          - node: 15
-            alpine: "3.10"
-          - node: 16
-            alpine: "3.11"
+          - 18
+          - 19
+          - 20
 
     steps:
       - name: Install Alpine build tools
-        run: apk add --no-cache python make git gcc g++
+        run: apk add --no-cache python3 make git gcc g++
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install packages
         run: npm install --unsafe-perm
@@ -44,7 +34,7 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: github.repository_owner == 'sass' && github.event_name != 'pull_request'
         with:
           name: ${{ matrix.node }}
